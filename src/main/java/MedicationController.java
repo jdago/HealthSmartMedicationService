@@ -13,29 +13,29 @@ public class MedicationController {
         this.medicationService = medicationService;
     }
 
-    @GetMapping("/medications")
+    @GetMapping("{patientId}")
     public Iterable<Medication> findAllForPatient(@PathVariable String patientId) {
         return medicationService.findAllForPatient(patientId);
     }
 
-    @GetMapping("/{medicationName}")
-    public Medication findByName(@PathVariable String medicationName) {
-        return medicationService.findByName(medicationName);
+    @GetMapping("{patientId}/{medicationName}")
+    public Optional<Medication> findByMedicationName(@PathVariable String patientId, @PathVariable String medicationName) {
+        return medicationService.findByMedicationName(patientId, medicationName);
     }
 
-    @GetMapping("/{patientId}")
-    public Optional<Medication> findByPatientId(@PathVariable String patientId) {
-        return medicationService.findByPatientId(patientId);
+    @GetMapping("{patientId}/{medicationNDC}")
+    public Optional<Medication> findByMedicationNDC(@PathVariable String patientId, @PathVariable String medicationNDC) {
+        return medicationService.findByMedicationNDC(patientId, medicationNDC);
     }
 
-    @GetMapping("/history/{patientId}")
-    public Iterable<Medication> findHistoryById(@PathVariable String patientId) {
-        return medicationService.findHistoryById(patientId);
+    @GetMapping("{patientId}/history")
+    public Iterable<Medication> findMedicationHistory(@PathVariable String patientId) {
+        return medicationService.findMedicationHistory(patientId);
     }
 
     @GetMapping("/label/{medicationName}/{dosage}")
-    public Iterable<Medication> findLabelByNameAndDosage(@PathVariable String medicationName, @PathVariable int dosage) {
-        return medicationService.findLabelByNameAndDosage(medicationName, dosage);
+    public Iterable<Medication> findLabelByMedicationNameAndDoseSize(@PathVariable String medicationName, @PathVariable int dosageInMilligrams) {
+        return medicationService.findLabelByMedicationNameAndDoseSize(medicationName, dosageInMilligrams);
     }
 
 }

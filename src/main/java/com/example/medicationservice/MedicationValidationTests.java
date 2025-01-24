@@ -18,7 +18,85 @@ public class MedicationValidationTests {
     }
 
     @Test
-    void whenMedicationNameDefinedValidationSucceeds() throws Exception {
+    void whenMedicationNameDefinedValidationSucceeds() {
+                //assert that the patient Id's is a fixed value
+                //assert that the medication name is defined
+                //if the medication name exists in the database, then it can be verified
+    }
+
+    @Test
+    void whenMedicationNameUndefinedValidationFails() {
+
+    }
+
+    @Test
+    void whenMedicationNDCDefinedValidationSucceeds() {
+
+    }
+
+    @Test
+    void whenMedicationNDCUndefinedValidationFails() {
+
+    }
+
+    @Test
+    void whenMedicationNDCFormatDefinedValidationSucceeds() {
+
+
+    }
+
+    @Test
+    void whenMedicationNDCFormatUndefinedValidationSucceeds() {
+
+    }
+
+    @Test
+    void whenMedicationDosageDefinedValidationSucceeds() {
+
+    }
+
+    @Test
+    void whenMedicationDosageUndefinedValidationSucceeds() {
+
+    }
+
+    @Test
+    void whenMedicationDosageIsPositiveGreaterThanZeroValidationSucceeds() {
+
+    }
+
+    @Test
+    void whenMedicationDosageIsNotPositiveGreaterThanZeroValidationFails() {
+
+    }
+
+    @Test
+    void whenMedicationLabelIsDefinedValidationSucceeds() {
+
+    }
+
+    @Test
+    void whenMedicationLabelIsUndefinedValidationFails() {
+
+    }
+
+    @Test
+    void whenPatientIdIsDefinedValidationSucceeds(){
+
+    }
+
+    @Test
+    void whenPatientIdIsUndefinedValidationFails() {
+
+    }
+
+    @Test
+    void whenPatientIdIsFormattedProperlyValidationSucceeds(){
+
+    }
+
+    @Test
+    void whenPatientIdIsNotFormattedProperlyValidationFails(){
 
     }
 }

@@ -4,10 +4,14 @@ import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Pattern;
 import jakarta.validation.constraints.Positive;
+import org.springframework.data.annotation.Id;
+import org.springframework.data.annotation.Version;
 
 import java.time.LocalDate;
 
 public record Medication(
+        @Version
+        int version,
         @NotBlank(message = "The medication name must be defined.")
         String medicationName,
         @NotBlank(message = "The medication's NDC must be defined." )
@@ -16,7 +20,7 @@ public record Medication(
         LocalDate expirationDate,
         @NotBlank(message = "The medication's dosage must be defined.")
         @Positive(message = "The medication's dosage must be greater than a zero")
-        int dosage,
+        int dosageInMilligrams,
         @NotNull(message = "The medication's refills must be defined.")
         @Positive(message = "The medication refills must be greater than zero and must be a whole number.")
         int availableRefills,
@@ -26,11 +30,17 @@ public record Medication(
         String medicationClass,
         @NotBlank(message = "The status of the medication must be defined.")
         String status,
-        @NotBlank(message = "The label of the medication must be defined.")
-        String label,
         @NotBlank(message = "The ID of the patient that a medication belongs to must be defined.")
-        @Pattern(regexp = "^[A-Z]{3}=[0-9A-Z]{4}$", message = "The patient must be in the format: [A-Z]{3}-[0-9]{4}[A-Z]{2}")
+        @Pattern(regexp = "^[A-Z]{3}-[0-9A-Z]{4}$", message = "The patient must be in the format: [A-Z]{3}-[0-9]{4}[A-Z]{2}")
+        @Id
         String patientId
         ) {
-
+        public static Medication of(
+                int version, String medicationName, String medicationNDC,LocalDate expirationDate, int dosageInMilligrams, int availableRefills, String controlledStatus,
+                String medicationClass, String status, String patientId) {
+                return new Medication(0, medicationName, medicationNDC, expirationDate, 0, 0, controlledStatus,
+                        medicationClass, status, patientId);
+        }
 }
+
+

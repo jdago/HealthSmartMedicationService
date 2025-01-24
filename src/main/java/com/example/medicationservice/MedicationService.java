@@ -16,21 +16,19 @@ public class MedicationService {
     public Iterable<Medication> findAllForPatient(String patientId){
         return medicationRepository.findAllForPatient(patientId);
     }
-    public Medication findByName(String medicationName){
-        return medicationRepository.findByName(medicationName).orElseThrow(()-> new MedicationsNotFoundException(medicationName));
+    public Optional<Medication> findByMedicationName(String patientId, String medicationName){
+        return medicationRepository.findByMedicationName(patientId, medicationName);
+    }
+    public Optional<Medication> findByMedicationNDC(String patientId, String medicationNDC) {
+        return medicationRepository.findByMedicationNDC(patientId, medicationNDC);
     }
 
-    public Optional<Medication> findByPatientId(String patientId) {
-        return medicationRepository.findByPatientId(patientId);
+    public Iterable<Medication> findMedicationHistory(String patientId){
+        return medicationRepository.findMedicationHistory(patientId);
     }
 
-    public Iterable<Medication> findHistoryById(String patientId){
-
-        return medicationRepository.findHistory(patientId);
-    }
-
-    public Iterable<Medication> findLabelByNameAndDosage(String medicationName, int dosage){
-        return medicationRepository.findLabelByNameAndDosage(medicationName, dosage);
+    public Iterable<Medication> findLabelByMedicationNameAndDoseSize(String medicationName, int dosageInMilligrams){
+        return medicationRepository.findLabelByMedicationNameAndDoseSize(medicationName, dosageInMilligrams);
     }
 }
 

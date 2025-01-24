@@ -6,8 +6,8 @@ import java.util.Optional;
 @Repository
 public interface MedicationRepository extends CrudRepository<Medication,Long>{
     Iterable<Medication> findAllForPatient(String patientId);
-    Optional<Medication> findByName(String medicationName);
-    Optional<Medication> findByPatientId(String patientId);
-    Iterable<Medication> findHistory(String patientId);
-    Iterable<Medication> findLabelByNameAndDosage(String medicationName, int dosage);
+    Optional<Medication> findByMedicationName(String patientId, String medicationName);
+    Optional<Medication> findByMedicationNDC(String patientId, String medicationName);
+    Iterable<Medication> findMedicationHistory(String patientId);
+    Iterable<Medication> findLabelByMedicationNameAndDoseSize(String medicationName, int dosageInMilligrams);
 }
