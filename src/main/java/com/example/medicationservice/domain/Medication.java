@@ -1,9 +1,10 @@
-package com.example.medicationservice;
+package com.example.medicationservice.domain;
 
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Pattern;
 import jakarta.validation.constraints.Positive;
+
 import org.springframework.data.annotation.Id;
 import org.springframework.data.annotation.Version;
 
@@ -17,6 +18,7 @@ public record Medication(
         @NotBlank(message = "The medication's NDC must be defined." )
         @Pattern(regexp = "^[0-9]{4}-[0-9]{4}-[0-9]{2}$", message = "The medication NDC must be defined in the format 0000-0000-00")
         String medicationNDC,
+
         LocalDate expirationDate,
         @NotBlank(message = "The medication's dosage must be defined.")
         @Positive(message = "The medication's dosage must be greater than a zero")

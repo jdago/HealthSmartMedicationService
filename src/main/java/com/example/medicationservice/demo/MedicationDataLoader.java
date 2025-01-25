@@ -1,11 +1,17 @@
-import com.example.medicationservice.Medication;
-import com.example.medicationservice.MedicationRepository;
+package com.example.medicationservice.demo;
+
+import com.example.medicationservice.domain.Medication;
+import com.example.medicationservice.persistence.MedicationRepository;
 import org.springframework.boot.context.event.ApplicationReadyEvent;
+import org.springframework.context.annotation.Profile;
 import org.springframework.context.event.EventListener;
 import org.springframework.stereotype.Component;
 
 import java.time.LocalDate;
+import java.util.List;
+
 @Component
+@Profile("testdata")
 public class MedicationDataLoader {
 
     private final MedicationRepository medicationRepository;
@@ -16,6 +22,7 @@ public class MedicationDataLoader {
 
     @EventListener(ApplicationReadyEvent.class)
     public void loadMedicationTestData() {
+        medicationRepository.deleteAll();
         var medication1 = Medication.of(
                 0, "Aspirin", "1234-5678-01", LocalDate.of(2025, 12, 31), 100, 5, "Non-Controlled",
                 "Painkiller", "Active", "XAB-1001");
@@ -28,8 +35,6 @@ public class MedicationDataLoader {
                 0, "Oxycodone", "3456-7890-03", LocalDate.of(2027, 3, 20), 50, 2, "Controlled",
                 "Opioid", "Active", "XAB-1003");
 
-        medicationRepository.save(medication1);
-        medicationRepository.save(medication2);
-        medicationRepository.save(medication3);
+        medicationRepository.saveAll(List.of(medication1, medication2, medication3));
     }
 }

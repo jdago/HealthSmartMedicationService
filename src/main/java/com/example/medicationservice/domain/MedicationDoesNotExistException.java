@@ -1,5 +1,4 @@
-import com.example.medicationservice.MedicationsNotFoundException;
-
+package com.example.medicationservice.domain;
 public class MedicationDoesNotExistException extends RuntimeException {
     public MedicationDoesNotExistException(String medicationName) {
 

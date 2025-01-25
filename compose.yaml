@@ -8,9 +8,9 @@ services:
     ports:
       - 9001:9001
     environment:
-      -BPL_JVM_THREAD_COUNT=50
-      -SPRING_DATASOURCE_URL = jdbc:postgresql://healthsmartmedicationservice-postgres:5432/healthsmartdb_medication
-      -SPRING_PROFILES_ACTIVE=testdata
+     BPL_JVM_THREAD_COUNT: "50"
+     SPRING_DATASOURCE_URL: "jdbc:postgresql://healthsmartmedicationservice-postgres:5432/healthsmartdb_medication"
+     SPRING_PROFILES_ACTIVE: "testdata"
 
   medication-service-postgres:
     image: "postgres:latest"
@@ -18,7 +18,7 @@ services:
     ports:
       - 5432:5432
     environment:
-      - POSTGRES_DB=healthsmartdb_medication
-      - POSTGRES_PASSWORD=secret
-      - POSTGRES_USER=myuser
+       POSTGRES_DB: "healthsmartdb_medication"
+       POSTGRES_PASSWORD: "password"
+       POSTGRES_USER: "user"
 

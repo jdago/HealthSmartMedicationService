@@ -1,3 +1,4 @@
+package com.example.medicationservice.domain;
 public class InvalidPatientIdException extends RuntimeException{
 
     public InvalidPatientIdException(String patientId) {

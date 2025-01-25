@@ -1,5 +1,7 @@
-import com.example.medicationservice.MedicationService;
-import com.example.medicationservice.Medication;
+package com.example.medicationservice.web;
+
+import com.example.medicationservice.domain.Medication;
+import com.example.medicationservice.domain.MedicationService;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.Optional;

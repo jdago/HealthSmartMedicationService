@@ -1,3 +1,4 @@
+package com.example.medicationservice.domain;
 public class InvalidMedicationNameException extends RuntimeException{
 
     public InvalidMedicationNameException (String medicationName)

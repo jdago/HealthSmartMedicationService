@@ -1,7 +1,7 @@
-package com.example.medicationservice;
+package com.example.medicationservice.domain;
+import com.example.medicationservice.persistence.MedicationRepository;
 
 import org.springframework.stereotype.Service;
-
 import java.util.Optional;
 
 @Service

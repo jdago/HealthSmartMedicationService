@@ -1,3 +1,4 @@
+package com.example.medicationservice.domain;
 public class LabelNotFoundException extends RuntimeException {
 
     public LabelNotFoundException(String medicationName, int dosageInMilligrams) {
