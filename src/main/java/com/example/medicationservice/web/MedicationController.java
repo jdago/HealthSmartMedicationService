@@ -35,8 +35,8 @@ public class MedicationController {
         return medicationService.findMedicationHistory(patientId);
     }
 
-    @GetMapping("/label/{medicationName}/{dosage}")
-    public Iterable<Medication> findLabelByMedicationNameAndDoseSize(@PathVariable String medicationName, @PathVariable int dosageInMilligrams) {
+    @GetMapping("/label/{medicationName}/{dosageInMilligrams}")
+    public Optional<Medication> findLabelByMedicationNameAndDoseSize(@PathVariable String medicationName, @PathVariable int dosageInMilligrams) {
         return medicationService.findLabelByMedicationNameAndDoseSize(medicationName, dosageInMilligrams);
     }
 

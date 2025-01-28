@@ -18,7 +18,6 @@ public record Medication(
         @NotBlank(message = "The medication's NDC must be defined." )
         @Pattern(regexp = "^[0-9]{4}-[0-9]{4}-[0-9]{2}$", message = "The medication NDC must be defined in the format 0000-0000-00")
         String medicationNDC,
-
         LocalDate expirationDate,
         @NotBlank(message = "The medication's dosage must be defined.")
         @Positive(message = "The medication's dosage must be greater than a zero")
@@ -38,9 +37,10 @@ public record Medication(
         String patientId
         ) {
         public static Medication of(
-                int version, String medicationName, String medicationNDC,LocalDate expirationDate, int dosageInMilligrams, int availableRefills, String controlledStatus,
+                 int version, String medicationName, String medicationNDC,LocalDate expirationDate, int dosageInMilligrams, int availableRefills, String controlledStatus,
                 String medicationClass, String status, String patientId) {
-                return new Medication(0, medicationName, medicationNDC, expirationDate, 0, 0, controlledStatus,
+
+                return new Medication(0, medicationName, medicationNDC, expirationDate, dosageInMilligrams, availableRefills, controlledStatus,
                         medicationClass, status, patientId);
         }
 }

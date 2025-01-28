@@ -1,15 +1,7 @@
 package com.example.medicationservice.web;
-import com.example.medicationservice.domain.MedicationService;
-
-import com.example.medicationservice.domain.MedicationsNotFoundException;
-import com.example.medicationservice.domain.PatientNotFoundException;
-import com.example.medicationservice.domain.InvalidDosageRangeException;
-import com.example.medicationservice.domain.InvalidMedicationNameException;
-import com.example.medicationservice.domain.LabelNotFoundException;
-import com.example.medicationservice.domain.MedicationHistoryDoesNotExistException;
-import com.example.medicationservice.domain.MedicationNDCNotFoundException;
-import com.example.medicationservice.domain.InvalidPatientIdException;
-import com.example.medicationservice.domain.InvalidNDCException;
+import com.example.medicationservice.demo.MedicationDataLoader;
+import com.example.medicationservice.domain.*;
+import com.example.medicationservice.persistence.MedicationRepository;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -18,15 +10,29 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.mockito.Mock;
 import org.mockito.InjectMocks;
+import org.springframework.context.annotation.Import;
+import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
+import org.springframework.test.web.servlet.result.MockMvcResultHandlers;
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 
+import java.util.ArrayList;
+import java.util.List;
+
+import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.document;
+import static org.springframework.restdocs.payload.PayloadDocumentation.fieldWithPath;
+import static org.springframework.restdocs.payload.PayloadDocumentation.responseFields;
+
+
 @WebMvcTest(MedicationController.class)
+@Import(MedicationDataLoader.class)
+@ActiveProfiles("testdata")
 class MedicationControllerTest {
 
     @Autowired
+    @SuppressWarnings("SpringJavaInjectionPointsAutowiringInspection")
     private MockMvc mockMvc;
 
     @Mock
@@ -35,10 +41,40 @@ class MedicationControllerTest {
     @InjectMocks
     private MedicationController medicationController;
 
+    @Autowired
+    @SuppressWarnings("SpringJavaInjectionPointsAutowiringInspection")
+    private MedicationRepository medicationRepository;
+
     @BeforeEach
     void setUp() {
         mockMvc = MockMvcBuilders.standaloneSetup(medicationController).build();
     }
+
+    @Test
+    void whenGetMedicationListPatientAndMedicationsExistReturn200() throws Exception {
+        String patientId = "XAB-1215";
+
+        Iterable<Medication> medicationsIterable = medicationRepository.findAllForPatient(patientId);
+        List<Medication> medications = new ArrayList<>();
+        medicationsIterable.forEach(medications::add);
+
+        BDDMockito.given(medicationService.findAllForPatient(patientId)).willReturn(medications);
+
+        mockMvc.perform(MockMvcRequestBuilders.get("/medications/{patientId}", patientId))
+                .andExpect(MockMvcResultMatchers.status().isOk())
+                .andDo(MockMvcResultHandlers.print())
+                .andDo(document("medication-list", responseFields(
+                        fieldWithPath("[].name").description("Name of the medication"),
+                        fieldWithPath("[].NDC").description("National Drug Code of the medication"),
+                        fieldWithPath("[].expirationDate").description("Expiration date of the medication"),
+                        fieldWithPath("[].dosageInMilligrams").description("Prescribed dosage (in milligrams) of the medication"),
+                        fieldWithPath("[].availableRefills").description("Available refills remaining for the medication"),
+                        fieldWithPath("[].controlledStatus").description("Controlled status of the medication"),
+                        fieldWithPath("[].medicationClass").description("Status (i.e., current, expired) of the medication")
+                )))
+                .andReturn();
+    }
+
     @Test
     void whenGetMedicationListPatientIdNotFoundReturn404() throws Exception {
         String patientId = "XAB-1214";
@@ -47,7 +83,10 @@ class MedicationControllerTest {
         .willThrow(PatientNotFoundException.class);
 
         mockMvc.perform(MockMvcRequestBuilders.get("/medications/{patientId}", patientId))
-                .andExpect(MockMvcResultMatchers.status().isNotFound());
+                .andExpect(MockMvcResultMatchers.status().isNotFound())
+                        .andDo(MockMvcResultHandlers.print())
+                        .andDo(document("medication-list-patient-not-found"))
+                        .andReturn();
     }
 
     @Test
@@ -58,7 +97,10 @@ class MedicationControllerTest {
                 .willThrow(MedicationsNotFoundException.class);
 
         mockMvc.perform(MockMvcRequestBuilders.get("/medications/{patientId}",patientId))
-                .andExpect(MockMvcResultMatchers.status().isNotFound());
+                .andExpect(MockMvcResultMatchers.status().isNotFound())
+                .andDo(MockMvcResultHandlers.print())
+                .andDo(document("medication-list-medications-do-not-exist"))
+                        .andReturn();
     }
 
     @Test
@@ -69,7 +111,10 @@ class MedicationControllerTest {
                 .willThrow(InvalidPatientIdException.class);
 
         mockMvc.perform(MockMvcRequestBuilders.get("/medications/{patientId}", patientId))
-                .andExpect(MockMvcResultMatchers.status().isBadRequest());
+                .andExpect(MockMvcResultMatchers.status().isBadRequest())
+                .andDo(MockMvcResultHandlers.print())
+                .andDo(document("medication-list-improper-patientid-format"))
+                .andReturn();
     }
 
     @Test
@@ -81,7 +126,10 @@ class MedicationControllerTest {
                 .willThrow(InvalidPatientIdException.class);
 
         mockMvc.perform(MockMvcRequestBuilders.get("/medications/{patientId}/{medicationName}", patientId, medicationName))
-                .andExpect(MockMvcResultMatchers.status().isBadRequest());
+                .andExpect(MockMvcResultMatchers.status().isBadRequest())
+                .andDo(MockMvcResultHandlers.print())
+                .andDo(document("medication-name-improper-patientid-format"))
+                .andReturn();
     }
 
     @Test
@@ -93,19 +141,25 @@ class MedicationControllerTest {
                 .willThrow(MedicationsNotFoundException.class);
 
         mockMvc.perform(MockMvcRequestBuilders.get("/medications/{patientId}/{medicationName}", patientId, medicationName))
-                .andExpect(MockMvcResultMatchers.status().isNotFound());
+                .andExpect(MockMvcResultMatchers.status().isNotFound())
+                .andDo(MockMvcResultHandlers.print())
+                .andDo(document("medication-name-not-found"))
+                .andReturn();
     }
 
     @Test
-    void whenGetMedicationNameNoMedicationFoundMedicationsReturn404() throws Exception {
+    void whenGetMedicationNameNoExistingMedicationNameMedicationsReturn404() throws Exception {
         String patientId = "XAB-1215";
         String medicationName = "Methadone";
 
         BDDMockito.given(medicationService.findByMedicationName(patientId, medicationName))
-                .willThrow(MedicationsNotFoundException.class);
+                .willThrow(MedicationDoesNotExistException.class);
 
         mockMvc.perform(MockMvcRequestBuilders.get("/medications/{patientId}/{medicationName}",patientId,medicationName))
-                .andExpect(MockMvcResultMatchers.status().isNotFound());
+                .andExpect(MockMvcResultMatchers.status().isNotFound())
+                .andDo(MockMvcResultHandlers.print())
+                .andDo(document("medication-name-no-existing-medication"))
+                .andReturn();
     }
     @Test
     void whenGetMedicationPatientIDNotFoundThenShouldReturn404() throws Exception {
@@ -116,7 +170,10 @@ class MedicationControllerTest {
                 .willThrow(PatientNotFoundException.class);
 
         mockMvc.perform(MockMvcRequestBuilders.get ("/medications/{patientId}/{medicationName}", patientId, medicationName))
-                .andExpect(MockMvcResultMatchers.status().isNotFound());
+                .andExpect(MockMvcResultMatchers.status().isNotFound())
+                .andDo(MockMvcResultHandlers.print())
+                .andDo(document("medication-name-no-patient-found"))
+                .andReturn();
 
     }
     @Test
@@ -128,7 +185,10 @@ class MedicationControllerTest {
                 .willThrow(InvalidMedicationNameException.class);
 
         mockMvc.perform(MockMvcRequestBuilders.get ("/medications/{patientId}/{medicationName}", patientId, medicationName))
-                .andExpect(MockMvcResultMatchers.status().isBadRequest());
+                .andExpect(MockMvcResultMatchers.status().isBadRequest())
+                .andDo(MockMvcResultHandlers.print())
+                .andDo(document("medication-name-improper-format"))
+                .andReturn();
     }
 
     @Test
@@ -140,7 +200,10 @@ class MedicationControllerTest {
                 .willThrow(MedicationsNotFoundException.class);
 
         mockMvc.perform(MockMvcRequestBuilders.get("/medications/{patientId}/{medicationNDC}",patientId, medicationNDC))
-                .andExpect(MockMvcResultMatchers.status().isNotFound());
+                .andExpect(MockMvcResultMatchers.status().isNotFound())
+                .andDo(MockMvcResultHandlers.print())
+                .andDo(document("medication-ndc-no-medication-found"))
+                .andReturn();
     }
 
     @Test
@@ -152,7 +215,10 @@ class MedicationControllerTest {
                 .willThrow(InvalidPatientIdException.class);
 
         mockMvc.perform(MockMvcRequestBuilders.get("/medications/{patientId}/{medicationNDC}", patientId, medicationNDC))
-                .andExpect(MockMvcResultMatchers.status().isBadRequest());
+                .andExpect(MockMvcResultMatchers.status().isBadRequest())
+                .andDo(MockMvcResultHandlers.print())
+                .andDo(document("medication-ndc-invalid-patientid-format"))
+                .andReturn();
     }
 
     @Test
@@ -164,7 +230,10 @@ class MedicationControllerTest {
                 .willThrow(MedicationsNotFoundException.class);
 
         mockMvc.perform(MockMvcRequestBuilders.get("/medications/{patientId}/{medicationNDC}", patientId, medicationNDC))
-                .andExpect(MockMvcResultMatchers.status().isNotFound());
+                .andExpect(MockMvcResultMatchers.status().isNotFound())
+                .andDo(MockMvcResultHandlers.print())
+                .andDo(document("medication-ndc-medication-not-exist"))
+                .andReturn();
     }
 
     @Test
@@ -176,7 +245,9 @@ class MedicationControllerTest {
                 .willThrow(MedicationNDCNotFoundException.class);
 
         mockMvc.perform(MockMvcRequestBuilders.get("/medications/{patientId}/{medicationNDC}",patientId,medicationNDC))
-                .andExpect(MockMvcResultMatchers.status().isNotFound());
+                .andExpect(MockMvcResultMatchers.status().isNotFound())
+                .andDo(document("medication-ndc-no-existing-mdc"))
+                .andReturn();
     }
     @Test
     void whenGetMedicationFromNDCPatientIDNotExistingThenShouldReturn404() throws Exception {
@@ -187,7 +258,9 @@ class MedicationControllerTest {
                 .willThrow(PatientNotFoundException.class);
 
         mockMvc.perform(MockMvcRequestBuilders.get ("/medications/{patientId}/{medicationNDC}", patientId, medicationNDC))
-                .andExpect(MockMvcResultMatchers.status().isNotFound());
+                .andExpect(MockMvcResultMatchers.status().isNotFound())
+                .andDo(document("medication-ndc-no-existing-patientid"))
+                .andReturn();
 
     }
 
@@ -200,7 +273,10 @@ class MedicationControllerTest {
                 .willThrow(InvalidNDCException.class);
 
         mockMvc.perform(MockMvcRequestBuilders.get("/medications/{patientId}/{medicationNDC}", patientId, medicationNDC))
-                .andExpect(MockMvcResultMatchers.status().isBadRequest());
+                .andExpect(MockMvcResultMatchers.status().isBadRequest())
+                .andDo(MockMvcResultHandlers.print())
+                .andDo(document("medication-ndc-improper-ndc-format"))
+                .andReturn();
     }
 
     @Test
@@ -211,7 +287,10 @@ class MedicationControllerTest {
                 .willThrow(PatientNotFoundException.class);
 
         mockMvc.perform(MockMvcRequestBuilders.get("/medications/{patientId}/history", patientId))
-                .andExpect(MockMvcResultMatchers.status().isNotFound());
+                .andExpect(MockMvcResultMatchers.status().isNotFound())
+                .andDo(MockMvcResultHandlers.print())
+                .andDo(document("medication-history-patientid-not-found"))
+                .andReturn();
     }
 
     @Test
@@ -222,7 +301,10 @@ class MedicationControllerTest {
                 .willThrow(InvalidPatientIdException.class);
 
         mockMvc.perform(MockMvcRequestBuilders.get("/medications/{patientId}/history", patientId))
-                .andExpect(MockMvcResultMatchers.status().isBadRequest());
+                .andExpect(MockMvcResultMatchers.status().isBadRequest())
+                .andDo(MockMvcResultHandlers.print())
+                .andDo(document("medication-history-invalid-patientid-format"))
+                .andReturn();
     }
 
     @Test
@@ -233,7 +315,10 @@ class MedicationControllerTest {
                 .willThrow(MedicationHistoryDoesNotExistException.class);
 
         mockMvc.perform(MockMvcRequestBuilders.get("/medications/{patientId}/history", patientId))
-                .andExpect(MockMvcResultMatchers.status().isNotFound());
+                .andExpect(MockMvcResultMatchers.status().isNotFound())
+                .andDo(MockMvcResultHandlers.print())
+                .andDo(document("medication-history-no-medications-found"))
+                .andReturn();
     }
 
     @Test
@@ -245,7 +330,10 @@ class MedicationControllerTest {
                 .willThrow(InvalidMedicationNameException.class);
 
         mockMvc.perform(MockMvcRequestBuilders.get("/medications/label/{medicationName}/{dosage}", medicationName, dosageInMilligrams))
-                .andExpect(MockMvcResultMatchers.status().isBadRequest());
+                .andExpect(MockMvcResultMatchers.status().isBadRequest())
+                .andDo(MockMvcResultHandlers.print())
+                .andDo(document("medication-label-improper-medication-format"))
+                .andReturn();
     }
 
     @Test
@@ -257,7 +345,10 @@ class MedicationControllerTest {
                 .willThrow(MedicationsNotFoundException.class);
 
         mockMvc.perform(MockMvcRequestBuilders.get("/medications/label/{medicationName}/{dosage}", medicationName, dosageInMilligrams))
-                .andExpect(MockMvcResultMatchers.status().isNotFound());
+                .andExpect(MockMvcResultMatchers.status().isNotFound())
+                .andDo(MockMvcResultHandlers.print())
+                .andDo(document("medication-label-no-existing-medication"))
+                .andReturn();
     }
 
     @Test
@@ -269,7 +360,10 @@ class MedicationControllerTest {
                 .willThrow(InvalidDosageRangeException.class);
 
         mockMvc.perform(MockMvcRequestBuilders.get("/medications/label/{medicationName}/{dosage}", medicationName, dosageInMilligrams))
-                .andExpect(MockMvcResultMatchers.status().isBadRequest());
+                .andExpect(MockMvcResultMatchers.status().isBadRequest())
+                .andDo(MockMvcResultHandlers.print())
+                .andDo(document("medication-label-improper-dosage-format"))
+                .andReturn();
     }
 
     @Test
@@ -281,7 +375,10 @@ class MedicationControllerTest {
                 .willThrow(LabelNotFoundException.class);
 
         mockMvc.perform(MockMvcRequestBuilders.get("/medications/label/{medicationName}/{dosage}", medicationName, dosageInMilligrams))
-                .andExpect(MockMvcResultMatchers.status().isNotFound());
+                .andExpect(MockMvcResultMatchers.status().isNotFound())
+                .andDo(MockMvcResultHandlers.print())
+                .andDo(document("medication-label-no-label-exists"))
+                .andReturn();
     }
 }
 

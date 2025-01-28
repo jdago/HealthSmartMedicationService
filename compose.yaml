@@ -3,7 +3,7 @@ services:
   medication-service:
     depends_on:
       - medication-service-postgres
-    image: "medication-service"
+    image: "medication-service-v1:0.0.1-SNAPSHOT"
     container_name: "medication-service"
     ports:
       - 9001:9001

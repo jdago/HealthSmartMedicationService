@@ -4,16 +4,17 @@ spring:
     name: Medication-service
   profiles:
     active: dev
+
   datasource:
     username: user
     password: password
-    url: jdbc:postgresql://localhost:5432/healthsmartdb_medication
     hikari:
       connection-timeout: 2000
       maximum-pool-size: 5
-  sql:
-      init:
-        mode: always
+    driver-class-name: org.postgresql.Driver
+  flyway:
+    locations: classpath:db.migration
+    enabled: false
 
 server:
   port: 9001
@@ -24,4 +25,25 @@ server:
       max: 50
       min-spare: 5
 
+---
+spring:
+  config:
+    activate:
+      on-profile: dev
+  datasource:
+    url:  jdbc:postgresql://localhost:5432/healthsmartdb_medication
+    username: user
+    password: password
+    driver-class-name: org.postgresql.Driver
+
+---
+spring:
+  config:
+    activate:
+      on-profile: test
+  datasource:
+    url: jdbc:tc:postgresql:latest://localhost:5432/healthsmartdb_medication
+    username: user
+    password: password
+    driver-class-name: org.postgresql.Driver
 

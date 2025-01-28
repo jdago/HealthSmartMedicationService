@@ -27,7 +27,7 @@ public class MedicationService {
         return medicationRepository.findMedicationHistory(patientId);
     }
 
-    public Iterable<Medication> findLabelByMedicationNameAndDoseSize(String medicationName, int dosageInMilligrams){
+    public Optional<Medication> findLabelByMedicationNameAndDoseSize(String medicationName, int dosageInMilligrams){
         return medicationRepository.findLabelByMedicationNameAndDoseSize(medicationName, dosageInMilligrams);
     }
 }

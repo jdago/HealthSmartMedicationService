@@ -17,6 +17,7 @@ import java.time.LocalDate;
 class MedicationJsonTests {
 
     @Autowired
+    @SuppressWarnings("SpringJavaInjectionPointsAutowiringInspection")
     private JacksonTester<Medication> json;
 
     @Test
