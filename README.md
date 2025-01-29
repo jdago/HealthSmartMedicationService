@@ -15,5 +15,7 @@ Then, it is routed to the appropriate API endpoint of the Medication Service. Fi
 As mentioned previously, the user will interact with a front-end client called HealthSmart Medication Mangement UI. It is an Angular Single Page Application 
 responsible for providing all of the medication management functionality to users via their web browser. It makes API calls using HTTPS to the system's
 Gateway Service. The Gateway Service is a Spring Cloud Gateway container. It is responsible for routing API calls to the appropriate service. In this case, after determining the route
-was for the /medications endpoint, it routes using HTTPS to the system's Medication Service. The Medication Service is a Spring Boot container. Since it's functionality has been discussed, it's important
-to now explore a container diagram of the Medication Service, as shown in Figure 1-2.
+was for the /medications endpoint, it routes using HTTPS to the system's Medication Service. The Medication Service is a Spring Boot container. Since it's functionality has been discussed, focus will be shifted to the Medication Service Database, which is a PostgreSQL container. It stores medication data that is used by the operations of the Medication Service. 
+
+![image](https://github.com/user-attachments/assets/e0fb9966-f705-41d7-9a03-8ed4a21f5454)
+
