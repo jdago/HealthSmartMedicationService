@@ -9,6 +9,8 @@ for reasons such as resolving medication concerns, checking for interactions, an
 The user (a person), which is a patient or clinician belonging to a partner organization of HealthSmart, interacts with a front-end client appropriately named HealthSmart Medication Management UI.  Before a request from a user is sent to the API of the Medication Service, it is first routed to the system's Gateway Service, which acts as a proxy for services and handles cross-cutting concerns.
 Then, it is routed to the appropriate API endpoint of the Medication Service. Figure 1-1 shows a context diagram of the Medication Service.
 
+![image](https://github.com/user-attachments/assets/f06d59f0-b35a-406e-9cba-0c3b9a6a2db8)
+
 
 As mentioned previously, the user will interact with a front-end client called HealthSmart Medication Mangement UI. It is an Angular Single Page Application 
 responsible for providing all of the medication management functionality to users via their web browser. It makes API calls using HTTPS to the system's
