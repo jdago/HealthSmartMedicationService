@@ -15,11 +15,3 @@ responsible for providing all of the medication management functionality to user
 Gateway Service. The Gateway Service is a Spring Cloud Gateway container. It is responsible for routing API calls to the appropriate service. In this case, after determining the route
 was for the /medications endpoint, it routes using HTTPS to the system's Medication Service. The Medication Service is a Spring Boot container. Since it's functionality has been discussed, it's important
 to now explore a container diagram of the Medication Service, as shown in Figure 1-2.
-
-
-
-
-
-The HealthSmart Medication Service was designed using a service-oriented architecture approach. Like other systems in the Medication Management System, it has a single responsibility, adhering to the Single Responsiblity Principle
-and it allows clients to interact with it through its RESTful API.
-RESTful API interface. 
