@@ -2,7 +2,10 @@ name: Commit Stage
 on: 
    push:
         branches:
-          - master
+          - medication-service-v1.0.3
+   pull_request:
+         branches:
+          - medication-service-v1.0.3
 
 env: 
     REGISTRY: ghcr.io
