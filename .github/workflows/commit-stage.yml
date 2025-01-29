@@ -37,8 +37,9 @@ jobs:
         with:
           sarif_file: ${{ steps.scan.outputs.sarif }}
       - name: Build, unit tests, and integration tests
-        run: mvn clean test --file pom.xml
-        working-directory: ${{github.workspace}}
+        run: |
+            chmod +x mvn
+            ./mvn -f ./pom.xml clean install
     
   package:
     name: Package and Publish
