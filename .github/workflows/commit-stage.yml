@@ -1,11 +1,11 @@
 name: Commit Stage
 on: push
 
-env:
+env: 
     REGISTRY: ghcr.io
-    IMAGE_NAME: jdago/HealthSmartMedicationService
+    IMAGE_NAME: jdago/medication-service
     VERSION: latest
-
+    
 jobs:
   build:
     name: Build and Test
@@ -37,8 +37,7 @@ jobs:
       - name: Build, unit tests, and integration tests
         run: |
           chmod +x mvn
-          cd HealthSmartMedicationManagement/MedicationService
-          ./mvn clean install
+          ./mvn build
   package:
     name: Package and Publish
     if: ${{ github.ref == 'refs/heads/main' }}
