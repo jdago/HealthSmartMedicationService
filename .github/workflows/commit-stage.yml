@@ -1,9 +1,5 @@
 name: Commit Stage
-on: 
-    push: 
-        branches: [ "master" ]
-    pull_request: 
-        branches: [ "master" ]
+on: push
 
 env: 
     REGISTRY: ghcr.io
