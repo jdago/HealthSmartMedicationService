@@ -16,8 +16,6 @@ jobs:
     steps:
       - name: Checkout source code
         uses: actions/checkout@v3
-        with:
-            fetch-depth: 0
       - name: Set up JDK
         uses: actions/setup-java@v3
         with:
@@ -39,7 +37,8 @@ jobs:
       - name: Build, unit tests, and integration tests
         run: |
           chmod +x mvn
-          ./mvn clean install --file HealthSmartMedicationManagement/MedicationService/pom.xml 
+          cd HealthSmartMedicationManagement/MedicationService
+          ./mvn clean install
   package:
     name: Package and Publish
     if: ${{ github.ref == 'refs/heads/main' }}
