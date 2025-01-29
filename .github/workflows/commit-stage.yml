@@ -3,7 +3,7 @@ on: push
 
 env: 
     REGISTRY: ghcr.io
-    IMAGE_NAME: jdago/medication-service
+    IMAGE_NAME: jdago/HealthSmartMedicationService
     VERSION: latest
     
 jobs:
@@ -18,12 +18,19 @@ jobs:
         uses: actions/checkout@v4
         with:
             fetch-depth: 0
+
+      - name: List directory contents (Debug)
+        run: |
+          echo "Listing contents of the working directory"
+          ls -R /home/runner/work/HealthSmartMedicationService
+            
       - name: Set up JDK
         uses: actions/setup-java@v3
         with:
          distribution: temurin
          java-version: 17
          cache: maven
+         
       - name: Code Vulnerability Scanning
         uses: anchore/scan-action@v3
         id: scan
@@ -31,15 +38,17 @@ jobs:
           path: "${{ github.workspace }}"
           fail-build: false
           severity-cutoff: high
+          
       - name: Upload vulnerability report
         uses: github/codeql-action/upload-sarif@v3
         if: success() || failure()
         with:
           sarif_file: ${{ steps.scan.outputs.sarif }}
+          
       - name: Build, unit tests, and integration tests
         run: |
             chmod +x mvn
-            ./mvn -f ./pom.xml clean install
+            ./mvn clean install
     
   package:
     name: Package and Publish
