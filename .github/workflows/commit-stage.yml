@@ -1,6 +1,6 @@
 name: Commit Stage
 on: 
-    push:
+   push:
         branches:
           - master
 
