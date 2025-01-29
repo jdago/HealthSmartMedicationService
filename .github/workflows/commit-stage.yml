@@ -37,7 +37,7 @@ jobs:
       - name: Build, unit tests, and integration tests
         run: |
           chmod +x mvn
-          ./mvn clean install --file pom.xml
+          ./mvn clean install --file HealthSmartMedicationManagement/MedicationService/pom.xml 
   package:
     name: Package and Publish
     if: ${{ github.ref == 'refs/heads/main' }}
