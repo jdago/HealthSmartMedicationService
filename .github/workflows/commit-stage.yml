@@ -1,5 +1,9 @@
 name: Commit Stage
-on: push
+on: 
+    push: 
+        branches: [ "master" ]
+    pull_request: 
+        branches: [ "master" ]
 
 env: 
     REGISTRY: ghcr.io
@@ -15,7 +19,9 @@ jobs:
       security-events: write
     steps:
       - name: Checkout source code
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
+        with:
+            fetch-depth: 0
       - name: Set up JDK
         uses: actions/setup-java@v3
         with:
@@ -35,9 +41,9 @@ jobs:
         with:
           sarif_file: ${{ steps.scan.outputs.sarif }}
       - name: Build, unit tests, and integration tests
-        run: |
-          chmod +x mvn
-          ./mvn build
+        run: mvn clean test --file pom.xml
+        working-directory: ${{github.workspace}}
+    
   package:
     name: Package and Publish
     if: ${{ github.ref == 'refs/heads/main' }}
