@@ -42,7 +42,6 @@ jobs:
           sarif_file: ${{ steps.scan.outputs.sarif }}
       - name: Build, unit tests, and integration tests
         run: |
-          chmod +x mvn
           ./mvn clean install
   package:
     name: Package and Publish
