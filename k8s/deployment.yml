@@ -1,0 +1,28 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: medication-service
+  labels:
+    app: medication-service
+spec:
+  selector:
+    matchLabels:
+      app: medication-service
+  template:
+    metadata:
+      labels:
+        app: medication-service
+    spec:
+      containers:
+        - name: medication-service
+          image: medication-service-v1:0.0.1-SNAPSHOT
+          imagePullPolicy: IfNotPresent
+          ports:
+            - containerPort: 9001
+          env:
+            - name: BPL_JVM_THREAD_PORT
+              value: "50"
+            - name: SPRING_DATASOURCE_URL
+              value: "jdbc:postgresql://healthsmartmedicationservice-postgres:5432/healthsmartdb_medication"
+            - name: SPRING_PROFILES_ACTIVE
+              value: "testdata"
